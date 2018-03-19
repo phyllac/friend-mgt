@@ -2,12 +2,12 @@ Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   namespace 'api' do
     namespace 'v1' do 
-      post 'connections/add_connection'
-      post 'connections/get_friends_list'
-      post 'connections/get_common_friends_list'
-      post 'connections/add_subscription'
-      post 'connections/block_user'
-      post 'connections/get_recipients'  
+      post 'connections' => 'connections#add_friend'
+      post 'friends' => 'connections#get_friends'
+      post 'common_friends' => 'connections#get_common_friends'
+      post 'subscriptions' => 'connections#add_subscription'
+      post 'blocks' => 'connections#block_user'
+      post 'recipients' => 'connections#get_recipients'
     end
   end
 end

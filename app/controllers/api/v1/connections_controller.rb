@@ -4,9 +4,10 @@ module Api
 
         class ConnectionsController < ApplicationController
 
-            #1. As a user, I need an API to create a friend connection between two email addresses.
-            def add_connection
-        
+            # POST /api/v1/connections
+            # 1. As a user, I need an API to create a friend connection between two email addresses.
+            def add_friend
+
                 if !params[:friends].nil?
                     
                     requestor = params[:friends][0]
@@ -18,7 +19,7 @@ module Api
                     if requestor_adds_target.save and target_adds_requestor.save
                         render json: {
                             success: true
-                        }, status: :ok
+                        }, status: :created
                     else
                         render json: {
                             success: false,
@@ -31,42 +32,50 @@ module Api
         
                     render json: {
                         success: false,
-                        error: "Incorrect/Insufficient JSON input"
-                    }, status: :ok
+                        error: "JSON input parameter is empty"
+                    }, status: :unprocessable_entity
         
                 end
-        
+
+
             end
-        
-            #2. As a user, I need an API to retrieve the friends list for an email address.
-            def get_friends_list
-        
+
+            # POST /api/v1/friends
+            # 2. As a user, I need an API to retrieve the friends list for an email address.
+            def get_friends
+
                 requestor = params[:email]
-        
-                if !requestor.nil? 
+                
+                if requestor.nil?
+
+                    render json: {
+                        success: false,
+                        error: "JSON input parameter is empty or invalid"
+                    }, status: :unprocessable_entity
+
+                else
+
                     friends = Connection.where(:requestor => requestor).pluck("target")
                     render json: {
                         success: friends.count > 0,
                         friends: friends, 
                         count: friends.count
                     }, status: :ok
-            
-                else
+
+                end
+
+            end
+
+            # POST /api/v1/common_friends
+            # 3. As a user, I need an API to retrieve the common friends list between two email addresses.
+            def get_common_friends
         
+                if params[:friends].nil?
                     render json: {
                         success: false,
-                        error: "Incorrect/Insufficient JSON input"
-                    }, status: :ok
-        
-                end
-        
-        
-            end
-        
-            #3. As a user, I need an API to retrieve the common friends list between two email addresses.
-            def get_common_friends_list
-        
-                if !params[:friends].nil?
+                        error: "JSON input parameter is empty or invalid"
+                    }, status: :unprocessable_entity 
+                else
                     friend1 = params[:friends][0]
                     friend2 = params[:friends][1]
             
@@ -79,15 +88,11 @@ module Api
                         friends: common_friends,
                         count: common_friends.count
                     }, status: :ok    
-                else
-                    render json: {
-                        success: false,
-                        error: "Incorrect/Insufficient JSON input"
-                    }, status: :ok 
                 end
         
             end
-        
+
+            # POST /api/v1/subscriptions
             #4. As a user, I need an API to subscribe to updates from an email address.
             def add_subscription
                 requestor = params[:requestor]
@@ -99,24 +104,25 @@ module Api
                     if new_subscription.save
                         render json: {
                             success: true
-                        }, status: :ok
+                        }, status: :created
                     else
                         render json: {
                             success: false,
                             errors: new_subscription.errors
-                        }, status: :ok
+                        }, status: :unprocessable_entity
                     end
             
                 else
                     render json: {
                         success: false,
-                        error: "Incorrect/Insufficient JSON input"
-                    }, status: :ok
+                        error: "JSON input parameter is empty or invalid"
+                    }, status: :unprocessable_entity
         
                 end
         
             end
-        
+
+            # POST /api/v1/block
             #5. As a user, I need an API to block updates from an email address.
             def block_user
                 requestor = params[:requestor]
@@ -128,24 +134,25 @@ module Api
                     if new_blocked_user.save
                         render json: {
                             success: true
-                        }, status: :ok
+                        }, status: :created
                     else
                         render json: {
                             success: false,
                             errors: new_blocked_user.errors
-                        }, status: :ok
+                        }, status: :unprocessable_entity
                     end
             
                 else
                     render json: {
                         success: false,
-                        error: "Incorrect/Insufficient JSON input"
-                    }, status: :ok
+                        error: "JSON input parameter is empty or invalid"
+                    }, status: :unprocessable_entity
         
                 end
         
             end
         
+            # POST /api/v1/recipients
             #6. As a user, I need an API to retrieve all email addresses that can receive updates from an email address.
             def get_recipients
                 sender = params[:sender]
@@ -175,12 +182,13 @@ module Api
                 else
                     render json: {
                         success: false,
-                        error: "Incorrect/Insufficient JSON input"
-                    }, status: :ok
+                        error: "JSON input parameter is empty or invalid"
+                    }, status: :unprocessable_entity
                 end
         
             end
-        
+            
+
         end
     
     end
