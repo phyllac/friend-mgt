@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::ConnectionsController, type: :controller do
+RSpec.describe Api::V1::ConnectionsController, type: :controller do
 
     describe 'POST /connections/add_connection' do
         before { post 'add_connection' }
