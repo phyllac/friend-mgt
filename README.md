@@ -137,7 +137,7 @@ Sample output:
 ```
 
 ### 6. Get recipients
-URL: https://friend-mgt.herokuapp.com/api/v1/blocks
+URL: https://friend-mgt.herokuapp.com/api/v1/recipients
 
 Sample input:
 ```
